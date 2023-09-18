@@ -29,7 +29,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  pass_port:
+                  passport:
                     description: passport use for other service
                     type: string
                     example: passport
@@ -55,7 +55,7 @@ paths:
                   description: User Name
                   type: string
                   example: toYOtaUser
-                pass_word:
+                password:
                   description: Password
                   type: string
                   example: toYOtaPassword
@@ -261,12 +261,12 @@ paths:
       security:
         - bearerAuth: []
       parameters:
-        - name: lat
+        - name: latitude
           in: query
           required: true
           schema:
             type: string
-        - name: long
+        - name: longitude
           in: query
           required: true
           schema:
@@ -299,6 +299,12 @@ paths:
                 $ref: '#/components/schemas/BadRequestError'
         '404':
           description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -402,6 +408,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
   parkings/zone/order/{id}:
     parameters:
       - name: id
@@ -445,6 +457,12 @@ paths:
                 $ref: '#/components/schemas/BadRequestError'
         '404':
           description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -581,6 +599,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
   parkings/fuel_delivery/booking_slot:
     get:
       tags:
@@ -632,6 +656,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
   parkings/fuel_delivery/services:
     get:
       tags:
@@ -678,6 +708,12 @@ paths:
                 $ref: '#/components/schemas/BadRequestError'
         '403':
           description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -750,6 +786,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
   parkings/fuel_delivery/{id}:
     get:
       tags:
@@ -797,6 +839,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
   parkings/fuel_delivery/{id}/cancel:
     delete:
       tags:
@@ -839,6 +887,12 @@ paths:
                 $ref: '#/components/schemas/BadRequestError'
         '404':
           description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
