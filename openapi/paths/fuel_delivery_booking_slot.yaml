@@ -1,0 +1,51 @@
+get:
+    tags:
+      - Fuel Delivery
+    summary: Get Fuel Delivery Slot
+    description: Get Fuel Delivery Slot
+    operationId: fuel_delivery_slot
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: date
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: coordinates
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: Accept-Language
+        in: header
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: ../components/responses/FuelDeliverySlot.yaml
+      '400':
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+      '403':
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml

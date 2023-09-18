@@ -1,0 +1,104 @@
+post:
+    tags:
+      - Parking
+    summary: Create Parking Order
+    description: For create parking order
+    operationId: create-parking-order
+    security:
+      - bearerAuth: []
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ws_user:
+                description: WS Username
+                type: string
+                example: toYOtaPURCHase
+              ws_password:
+                description: WS Password
+                type: string
+                example: Password
+              smartphone_app_id:
+                description: Smart Phone App ID (linking ID)
+                type: string
+                example: fwwveqxnue9715041254701615097270154e858104ab1ad4b708494e6d5c36f6282yzjepkheluyecdrqqfiqftiokylkvymzr
+              phone_number:
+                description: Mobile number preceded by 971 without ‘0’, ‘+’ or ‘00’
+                type: string
+                example: 971504125470
+              lang:
+                description: “0” for English, “8” for Arabic
+                type: string
+                example: 0
+              plane_number:
+                description: Plate Number of the vehicle
+                type: string
+                example: 38599
+              plate_source_id:
+                description: Plate Source ID of the vehicle
+                type: integer
+                example: 2
+              plate_type_id:
+                description: Plate Type ID of the vehicle
+                type: integer
+                example: 1
+              plate_color_id:
+                description: Plate Color ID of the vehicle
+                type: integer
+                example: 1
+              zone_number:
+                description: Parking Zone Number
+                type: string
+                example: 226C
+              duration:
+                description: 30 for ½ hour Virtual Permit. For other durations, the value should be in hours e.g. 1, 2, 3…etc.
+                type: integer
+                example: 1
+              rta_portal_id:
+                description: RTA Portal User ID
+                type: string
+                example: TarunToyota
+              loyalty_id:
+                description: Loyalty Id of the user account. Otherwise send 0
+                type: integer
+                example: 0
+              req_src_id:
+                description: 6
+                type: integer
+                example: 8
+      description: Payload for create parking order
+      required: true
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: ../components/responses/ParkingOrder.yaml
+      '400':
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+      '403':
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+
+
+
+
+

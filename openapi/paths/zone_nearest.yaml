@@ -1,0 +1,55 @@
+get:
+    tags:
+      - Parking
+    summary: Get Nearest Zone
+    description: Get nearest zone from user location
+    operationId: nearest-zone
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: lat
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: long
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: ../components/responses/Zone.yaml
+      '400':
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+      '403':
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+      '404':
+        description: Not found
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+
+
+

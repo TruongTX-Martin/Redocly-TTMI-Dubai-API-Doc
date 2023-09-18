@@ -1,0 +1,39 @@
+description: Fuel Delivery Service
+type: object
+properties: 
+  id: 
+    type: integer
+    example: 1
+  name: 
+    type: string
+    example: Super 98
+  price: 
+    type: object
+    properties:
+      amount:
+        type: float
+        example: 3.87
+      unit:
+        type: string
+        example: litre
+      currency:
+        type: string
+        example: aed
+  service: 
+    type: object
+    properties:
+      code:
+        type: string
+        example: FD
+      slug:
+        type: string
+        example: fuel
+      name:
+        type: string
+        example: Fuel Delivery
+      description:
+        type: string
+        example: Anytime, anywhere
+      subtitle:
+        type: string
+        example: Same price as the petrol station!

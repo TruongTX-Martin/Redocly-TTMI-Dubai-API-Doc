@@ -1,0 +1,110 @@
+description: Vehicle
+type: object
+properties: 
+  id: 
+    description: Vehicle ID (System issued)
+    type: string
+    example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+  license_plate: 
+    description: Vehicle license plate. Must be unique in the same tenant
+    type: string
+    example: string
+  type: 
+    description: Vehicle type
+    type: object
+    properties:
+      display_id:
+        Enum: ["CAR","MOTORCYCLE","TRUCK"]
+        type: string
+  cargo_volume:	
+    description: The available volume for cargo or luggage. For automobiles, this is usually the trunk volume (L)
+    type: float
+    example: 99999
+  cargo_weight:	
+    description: The permitted total weight of cargo and installations (e.g. a roof rack) on top of the vehicle (Kg)
+    type: float
+    example: 99999
+  speed_limit:	
+    description: Vehicle speed limit
+    type: integer
+    example: 200
+  driver: 
+    type: object
+    properties:
+      id:
+        type: string
+      full_name:
+        type: string
+  work_setting: 
+    type: object
+    properties:
+      start_operating_time:
+        type: string
+      end_operating_time:
+        type: string
+      start_location:
+        type: object
+        properties:
+          id:
+            type: string
+            example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          display_id:
+            type: string
+            example: string
+          name:
+            type: string
+            example: string
+          contact_name:
+            type: string
+            example: string
+          contact_tel:
+            type: string
+            example: +6568179590
+          address:
+            type: string
+            example: 123 Any Street, Any Town, USA
+          lat:
+            type: float
+            example: 13.719126
+          lon:
+            type: float
+            example: 100.50645
+          start_operating_time:
+            type: string
+            example: 2023-06-28T07:00:00+08:00
+          end_operating_time:
+            type: string
+            example: 2023-06-28T07:00:00+08:00
+      end_location:
+        type: object
+        properties:
+          id:
+            type: string
+            example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          display_id:
+            type: string
+            example: string
+          name:
+            type: string
+            example: string
+          contact_name:
+            type: string
+            example: string
+          contact_tel:
+            type: string
+            example: +6568179590
+          address:
+            type: string
+            example: 123 Any Street, Any Town, USA
+          lat:
+            type: float
+            example: 13.719126
+          lon:
+            type: float
+            example: 100.50645
+          start_operating_time:
+            type: string
+            example: 2023-06-28T07:00:00+08:00
+          end_operating_time:
+            type: string
+            example: 2023-06-28T07:00:00+08:00

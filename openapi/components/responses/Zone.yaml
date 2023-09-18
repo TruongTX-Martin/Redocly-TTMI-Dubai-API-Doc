@@ -1,0 +1,26 @@
+description: Zone
+type: object
+properties: 
+  id: 
+    type: integer
+    example: 1
+  id_str: 
+    type: string
+    description: id from Redis database
+    example: 29734
+  lat: 
+    description: latitude
+    type: float
+    example: -25.265630517742466
+  long: 
+    description: longitude
+    type: float
+    example: -25.265630517742466
+  type: 
+    description: Type
+    type: String
+    example: Premium
+  provider: 
+    description: Provider
+    type: String
+    example: MAWAQIF

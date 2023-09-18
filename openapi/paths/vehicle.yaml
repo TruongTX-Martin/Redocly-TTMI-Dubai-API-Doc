@@ -1,0 +1,84 @@
+get:
+    tags:
+      - Vehicle
+    summary: Get Vehicles
+    description: Get all vehicle belong to current user
+    operationId: vehicles
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: page_size
+        in: path
+        required: false
+        schema:
+          type: integer
+          description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
+      - name: page_token
+        in: path
+        required: false
+        schema:
+          type: string
+          description: The next_page_token value returned from a previous List request, if any.
+      - name: order_by
+        in: path
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Specify sorting order for list results. The string value follows SQL syntax. comma separated list of fields. The default sorting order is ascending.
+      - name: query
+        in: path
+        required: false
+        schema:
+          type: string
+          description: The keyword you want to use to perform the search
+      - name: query_by
+        in: path
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Specify search fields you want to search by keyword specified in query
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page_size:
+                  type: integer
+                  description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
+                  example: 20
+                page_token: 
+                  type: string
+                vehicles: 
+                  type: array 
+                  items: 
+                    $ref: ../components/responses/Vehicle.yaml
+
+      '400':
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+      '403':
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+
+
+

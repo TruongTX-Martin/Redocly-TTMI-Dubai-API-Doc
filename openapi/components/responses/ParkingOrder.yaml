@@ -1,0 +1,73 @@
+description: Parking Order
+type: object
+properties: 
+  Id: 
+    type: long
+    description: Virtual Permit ID
+  parentId: 
+    type: long
+    description: Parent ID of the ticket, if any
+  msisdn: 
+    type: string
+    description: Mobile Number of the user
+  smartPhoneAppId: 
+    type: string
+    description: Smart Phone App ID (linking ID)
+  plateNo: 
+    type: string
+    description: Plate Number of the vehicle
+  plateSourceId: 
+    type: integer
+    description: Plate Source of the vehicle
+  plateTypeId: 
+    type: integer
+    description: Plate Type of the vehicle
+  plateColorId: 
+    type: integer
+    description: Plate Color of the vehicle
+  zoneNo: 
+    type: string
+    description: Parking Zone Number
+  startTime: 
+    type: long
+    description: Start Time of the Virtual Permit
+  expiryTime: 
+    type: long
+    description: Expiry Time of the Virtual Permit
+  nextPaidParkingTime: 
+    type: long
+    description: Next Paid Parking Time if current time is Free Parking Time
+  lang: 
+    type: string
+    description: “0” for English - “8” for Arabic
+  datetimeCreated: 
+    type: long
+    description: Date Time of the VP Created
+  vpType: 
+    type: string
+    description: Confirmation/Extension
+  paymentType: 
+    type: string
+    description: Parking Account
+  errorCode: 
+    type: integer
+    description: Error Code, if any
+  errorMsg: 
+    type: string
+    description: Error Message, if any
+  parkingDuration: 
+    type: integer
+    description: Duration of the Virtual Permit in minutes
+  totalDuration: 
+    type: integer
+    description: Total Duration of the Virtual Permit in hours
+  maxParkingDuration: 
+    type: integer
+    description: Maximum duration for parking allowed in zone
+  amount: 
+    type: integer
+    description: Amount charged in fills
+  vpSuccess: 
+    type: boolean
+    description: true or false
+    

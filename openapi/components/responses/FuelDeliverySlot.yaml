@@ -1,0 +1,9 @@
+description: Fuel Delivery Slot
+type: object
+properties: 
+  start_time: 
+    type: string
+    example: 08:00
+  end_time: 
+    type: string
+    example: 09:00

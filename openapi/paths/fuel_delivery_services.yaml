@@ -1,0 +1,50 @@
+get:
+    tags:
+      - Fuel Delivery
+    summary: Get Fuel Delivery Services
+    description: Get Fuel Delivery Service
+    operationId: fuel_delivery_service
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: coordinates
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: Accept-Language
+        in: header
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vehicles: 
+                  type: array 
+                  items: 
+                    $ref: ../components/responses/FuelDeliveryService.yaml
+      '400':
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+      '403':
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml

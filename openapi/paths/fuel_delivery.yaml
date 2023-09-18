@@ -1,0 +1,68 @@
+post:
+    tags:
+      - Fuel Delivery
+    summary: Create Fuel Delivery Order
+    description: Create Fuel Delivery Order
+    operationId: create-fuel-delivery-order
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: Accept-Language
+        in: header
+        required: true
+        schema:
+          type: string
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              product_id:
+                description: The service choose from list 
+                type: string
+                example: 1
+              address:
+                description: User Address
+                type: object
+              coordinates:
+                description: Coordinates
+                type: object
+              timeslot:
+                description: timeslot
+                type: object
+              vehicle:
+                description: vehicle
+                type: object
+              user:
+                description: user
+                type: object
+      description: Payload for create fuel delivery order
+      required: true
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: ../components/responses/FuelDeliveryOrder.yaml
+      '400':
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml
+      '403':
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: ../components/schemas/BadRequestError.yaml

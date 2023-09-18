@@ -1,0 +1,40 @@
+post:
+  tags:
+    - Authentication
+  summary: Login
+  description: Login to TCJP system with account from global application.
+  operationId: login
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              pass_port:
+                description: passport use for other service 
+                type: string
+                example: passport
+    '400':
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: ../components/schemas/BadRequestError.yaml
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            user_name:
+              description: User Name 
+              type: string
+              example: toYOtaUser
+            pass_word:
+              description: Password 
+              type: string
+              example: toYOtaPassword
+    description: Payload for login API
+    required: true

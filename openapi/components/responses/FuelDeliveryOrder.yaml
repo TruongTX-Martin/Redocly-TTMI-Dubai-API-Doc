@@ -1,0 +1,71 @@
+description: Fuel Delivery Order
+type: object
+properties: 
+  product_id: 
+    type: integer
+    example: 453
+  address: 
+    type: object
+    properties:
+      coordinates:
+        type: object
+        properties:
+          lat: 
+            type: float
+            example: 25.204198539249326
+          long: 
+            type: float
+            example: 25.204198539249326
+  timeslot:
+    type: object
+    properties:
+      date: 
+        type: string
+        example: 2023-12-31
+      start_time: 
+        type: string
+        example: 21:00
+      end_time: 
+        type: string
+        example: 22:00
+  vehicles: 
+    type: object
+    properties:
+      model_name:
+        type: string
+        example: Camry
+      vin:
+        type: string
+        example: 4T1BE32K85U528911
+      year:
+        type: integer
+        example: 2005
+      exterior_color_type:
+        type: string
+        example: white
+      registration_plate:
+        type: object
+        properties:
+          issuer_city:
+            type: string
+            example: dubai
+          sections:
+            type: array
+            items:
+              type: string
+            example: ["N","87395"]
+  user:
+    type: object
+    properties:
+      mobile:
+        type: integer
+        example: 971551234567
+      first_name:
+        type: string
+        example: "John"
+      last_name:
+        type: string
+        example: "Dae"
+
+
+      
