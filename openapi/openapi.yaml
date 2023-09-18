@@ -2,13 +2,6 @@ openapi: 3.1.0
 info:
   version: 1.0.0
   title: TTMI Dubai
-servers:
-  - url: https://{tenant}/api/v1
-    variables:
-      tenant:
-        default: www
-        description: Your tenant id
-  - url: https://example.com/api/v1
 tags:
   - name: Authentication
     description: Login with account from global app
@@ -19,44 +12,1193 @@ tags:
   - name: Fuel Delivery
     description: API for Fuel service
 paths:
-  /authentication: 
-    $ref: paths/authentication.yaml
-  /vehicles: 
-    $ref: paths/vehicle.yaml
-  /vehicles/{id}: 
-    $ref: paths/vehicle_detail.yaml
-  /parkings/zone/nearest: 
-    $ref: paths/zone_nearest.yaml
-  /parkings/zone/order: 
-    $ref: paths/parking_order.yaml
-  /parkings/zone/order/{id}: 
-    $ref: paths/parking_order_id.yaml
-  /parkings/zone/orders: 
-    $ref: paths/parking_orders.yaml
-  /parkings/fuel_delivery/booking_slot: 
-    $ref: paths/fuel_delivery_booking_slot.yaml
-  /parkings/fuel_delivery/services: 
-    $ref: paths/fuel_delivery_services.yaml
-  /parkings/fuel_delivery: 
-    $ref: paths/fuel_delivery.yaml
-  /parkings/fuel_delivery/{id}: 
-    $ref: paths/fuel_delivery_id.yaml
-  /parkings/fuel_delivery/{id}/cancel: 
-    $ref: paths/fuel_delivery_id_cancel.yaml
-# components:
-#   securitySchemes:y
-#     main_auth:
-#       type: oauth2
-#       flows:
-#         implicit:
-#           authorizationUrl: http://example.com/api/oauth/dialog
-#           scopes:
-#             read:users: read users info
-#             write:users: modify or remove users
-#     api_key:
-#       type: apiKey
-#       in: header
-#       name: api_key
-#     basic_auth:
-#       type: http
-#       scheme: basic
+  'authentication': 
+    post:
+      tags:
+        - Authentication
+      summary: Login
+      description: Login to TCJP system with account from global application.
+      operationId: login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pass_port:
+                    description: passport use for other service 
+                    type: string
+                    example: passport
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_name:
+                  description: User Name 
+                  type: string
+                  example: toYOtaUser
+                pass_word:
+                  description: Password 
+                  type: string
+                  example: toYOtaPassword
+        description: Payload for login API
+        required: true
+
+  'vehicles': 
+    get:
+      tags:
+        - Vehicle
+      summary: Get Vehicles
+      description: Get all vehicle belong to current user
+      operationId: vehicles
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page_size
+          in: path
+          required: false
+          schema:
+            type: integer
+            description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
+        - name: page_token
+          in: path
+          required: false
+          schema:
+            type: string
+            description: The next_page_token value returned from a previous List request, if any.
+        - name: order_by
+          in: path
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            description: Specify sorting order for list results. The string value follows SQL syntax. comma separated list of fields. The default sorting order is ascending.
+        - name: query
+          in: path
+          required: false
+          schema:
+            type: string
+            description: The keyword you want to use to perform the search
+        - name: query_by
+          in: path
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            description: Specify search fields you want to search by keyword specified in query
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page_size:
+                    type: integer
+                    description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
+                    example: 20
+                  page_token: 
+                    type: string
+                  vehicles: 
+                    type: array 
+                    items: 
+                      $ref: '#/components/schemas/Vehicle'
+
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+  'vehicles/{id}': 
+    get:
+      tags:
+        - Vehicle
+      summary: Get Vehicle Detail
+      description: Get Vehicle Detail with status, plate number
+      operationId: vehicles/id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+    patch:
+        tags:
+          - Vehicle
+        summary: Update Vehicle Detail
+        description: For update plate number
+        operationId: update-vehicle-plate
+        security:
+          - bearerAuth: []
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  plate_number:
+                    description: plate number
+                    type: string
+                    example: 12356789
+          description: Payload for update vehicle plate
+          required: true
+        responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  $ref: '#/components/schemas/Vehicle'
+          '400':
+            description: Bad request
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequestError'
+
+          '401':
+            description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequestError'
+          '403':
+            description: Forbidden
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequestError'
+          '404':
+            description: Not found
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequestError'
+
+  'parkings/zone/nearest': 
+    get:
+      tags:
+        - Parking
+      summary: Get Nearest Zone
+      description: Get nearest zone from user location
+      operationId: nearest-zone
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: lat
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: long
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Zone'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+  'parkings/zone/order': 
+    post:
+      tags:
+        - Parking
+      summary: Create Parking Order
+      description: For create parking order
+      operationId: create-parking-order
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ws_user:
+                  description: WS Username
+                  type: string
+                  example: toYOtaPURCHase
+                ws_password:
+                  description: WS Password
+                  type: string
+                  example: Password
+                smartphone_app_id:
+                  description: Smart Phone App ID (linking ID)
+                  type: string
+                  example: fwwveqxnue9715041254701615097270154e858104ab1ad4b708494e6d5c36f6282yzjepkheluyecdrqqfiqftiokylkvymzr
+                phone_number:
+                  description: Mobile number preceded by 971 without ‘0’, ‘+’ or ‘00’
+                  type: string
+                  example: 971504125470
+                lang:
+                  description: “0” for English, “8” for Arabic
+                  type: string
+                  example: 0
+                plane_number:
+                  description: Plate Number of the vehicle
+                  type: string
+                  example: 38599
+                plate_source_id:
+                  description: Plate Source ID of the vehicle
+                  type: integer
+                  example: 2
+                plate_type_id:
+                  description: Plate Type ID of the vehicle
+                  type: integer
+                  example: 1
+                plate_color_id:
+                  description: Plate Color ID of the vehicle
+                  type: integer
+                  example: 1
+                zone_number:
+                  description: Parking Zone Number
+                  type: string
+                  example: 226C
+                duration:
+                  description: 30 for ½ hour Virtual Permit. For other durations, the value should be in hours e.g. 1, 2, 3…etc.
+                  type: integer
+                  example: 1
+                rta_portal_id:
+                  description: RTA Portal User ID
+                  type: string
+                  example: TarunToyota
+                loyalty_id:
+                  description: Loyalty Id of the user account. Otherwise send 0
+                  type: integer
+                  example: 0
+                req_src_id:
+                  description: 6
+                  type: integer
+                  example: 8
+        description: Payload for create parking order
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ParkingOrder'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+  'parkings/zone/order/{id}': 
+    get:
+      tags:
+        - Parking
+      summary: Get Parking Order Detail
+      description: Parking order detail
+      operationId: parking-order-detail
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/ParkingOrder'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+    patch:
+        tags:
+          - Parking
+        summary: Update Parking Order
+        description: For extend duration
+        operationId: update-parking-order
+        security:
+          - bearerAuth: []
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  duration:
+                    description: duration
+                    type: string
+                    example: 2
+          description: Payload for extend duration time
+          required: true
+        responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  $ref: '#/components/schemas/ParkingOrder'
+          '400':
+            description: Bad request
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequestError'
+
+          '401':
+            description: Unauthorized
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequestError'
+          '403':
+            description: Forbidden
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequestError'
+          '404':
+            description: Not found
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/BadRequestError'
+
+  'parkings/zone/orders': 
+    get:
+      tags:
+        - Parking
+      summary: Get Parking Orders
+      description: Get Parking Orders
+      operationId: parking-orders
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page_size
+          in: path
+          required: false
+          schema:
+            type: integer
+            description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
+        - name: page_token
+          in: path
+          required: false
+          schema:
+            type: string
+            description: The next_page_token value returned from a previous List request, if any.
+        - name: order_by
+          in: path
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            description: Specify sorting order for list results. The string value follows SQL syntax. comma separated list of fields. The default sorting order is ascending.
+        - name: query
+          in: path
+          required: false
+          schema:
+            type: string
+            description: The keyword you want to use to perform the search
+        - name: query_by
+          in: path
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            description: Specify search fields you want to search by keyword specified in query
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page_size:
+                    type: integer
+                    description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
+                    example: 20
+                  page_token: 
+                    type: string
+                  vehicles: 
+                    type: array 
+                    items: 
+                      $ref: '#/components/schemas/ParkingOrder'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+  'parkings/fuel_delivery/booking_slot': 
+    get:
+      tags:
+        - Fuel Delivery
+      summary: Get Fuel Delivery Slot
+      description: Get Fuel Delivery Slot
+      operationId: fuel_delivery_slot
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: date
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: coordinates
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Accept-Language
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/FuelDeliverySlot'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+  'parkings/fuel_delivery/services': 
+    get:
+      tags:
+        - Fuel Delivery
+      summary: Get Fuel Delivery Services
+      description: Get Fuel Delivery Service
+      operationId: fuel_delivery_service
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: coordinates
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: Accept-Language
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  vehicles: 
+                    type: array 
+                    items: 
+                      $ref: '#/components/schemas/FuelDeliveryService'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+  'parkings/fuel_delivery': 
+    post:
+      tags:
+        - Fuel Delivery
+      summary: Create Fuel Delivery Order
+      description: Create Fuel Delivery Order
+      operationId: create-fuel-delivery-order
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Accept-Language
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  description: The service choose from list 
+                  type: string
+                  example: 1
+                address:
+                  description: User Address
+                  type: object
+                coordinates:
+                  description: Coordinates
+                  type: object
+                timeslot:
+                  description: timeslot
+                  type: object
+                vehicle:
+                  description: vehicle
+                  type: object
+                user:
+                  description: user
+                  type: object
+        description: Payload for create fuel delivery order
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/FuelDeliveryOrder'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+  'parkings/fuel_delivery/{id}': 
+    get:
+      tags:
+        - Fuel Delivery
+      summary: Get Fuel Order Detail
+      description: Fuel order detail
+      operationId: fuel-order-detail
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/FuelDeliveryOrder'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+
+  'parkings/fuel_delivery/{id}/cancel': 
+    delete:
+      tags:
+        - Fuel Delivery
+      summary: Cancel Fuel Order
+      description: Cancel Fuel Order
+      operationId: delete-fuel-order
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+components:
+  schemas:
+    BadRequestError:
+      type: object
+      properties: 
+        code: 
+          description: Error code
+          type: integer
+          example: 400
+        error: 
+          description: Error message
+          type: string
+          example: Error
+    Vehicle:
+      description: Vehicle
+      type: object
+      properties: 
+        id: 
+          description: Vehicle ID (System issued)
+          type: string
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+        license_plate: 
+          description: Vehicle license plate. Must be unique in the same tenant
+          type: string
+          example: string
+        type: 
+          description: Vehicle type
+          type: object
+          properties:
+            display_id:
+              Enum: ["CAR","MOTORCYCLE","TRUCK"]
+              type: string
+        cargo_volume:	
+          description: The available volume for cargo or luggage. For automobiles, this is usually the trunk volume (L)
+          type: float
+          example: 99999
+        cargo_weight:	
+          description: The permitted total weight of cargo and installations (e.g. a roof rack) on top of the vehicle (Kg)
+          type: float
+          example: 99999
+        speed_limit:	
+          description: Vehicle speed limit
+          type: integer
+          example: 200
+        driver: 
+          type: object
+          properties:
+            id:
+              type: string
+            full_name:
+              type: string
+        work_setting: 
+          type: object
+          properties:
+            start_operating_time:
+              type: string
+            end_operating_time:
+              type: string
+            start_location:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+                display_id:
+                  type: string
+                  example: string
+                name:
+                  type: string
+                  example: string
+                contact_name:
+                  type: string
+                  example: string
+                contact_tel:
+                  type: string
+                  example: +6568179590
+                address:
+                  type: string
+                  example: 123 Any Street, Any Town, USA
+                lat:
+                  type: float
+                  example: 13.719126
+                lon:
+                  type: float
+                  example: 100.50645
+                start_operating_time:
+                  type: string
+                  example: 2023-06-28T07:00:00+08:00
+                end_operating_time:
+                  type: string
+                  example: 2023-06-28T07:00:00+08:00
+            end_location:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+                display_id:
+                  type: string
+                  example: string
+                name:
+                  type: string
+                  example: string
+                contact_name:
+                  type: string
+                  example: string
+                contact_tel:
+                  type: string
+                  example: +6568179590
+                address:
+                  type: string
+                  example: 123 Any Street, Any Town, USA
+                lat:
+                  type: float
+                  example: 13.719126
+                lon:
+                  type: float
+                  example: 100.50645
+                start_operating_time:
+                  type: string
+                  example: 2023-06-28T07:00:00+08:00
+                end_operating_time:
+                  type: string
+                  example: 2023-06-28T07:00:00+08:00
+    Zone: 
+      description: Zone
+      type: object
+      properties: 
+        id: 
+          type: integer
+          example: 1
+        id_str: 
+          type: string
+          description: id from Redis database
+          example: 29734
+        lat: 
+          description: latitude
+          type: float
+          example: -25.265630517742466
+        long: 
+          description: longitude
+          type: float
+          example: -25.265630517742466
+        type: 
+          description: Type
+          type: String
+          example: Premium
+        provider: 
+          description: Provider
+          type: String
+          example: MAWAQIF
+    ParkingOrder:
+      description: Parking Order
+      type: object
+      properties: 
+        Id: 
+          type: long
+          description: Virtual Permit ID
+        parentId: 
+          type: long
+          description: Parent ID of the ticket, if any
+        msisdn: 
+          type: string
+          description: Mobile Number of the user
+        smartPhoneAppId: 
+          type: string
+          description: Smart Phone App ID (linking ID)
+        plateNo: 
+          type: string
+          description: Plate Number of the vehicle
+        plateSourceId: 
+          type: integer
+          description: Plate Source of the vehicle
+        plateTypeId: 
+          type: integer
+          description: Plate Type of the vehicle
+        plateColorId: 
+          type: integer
+          description: Plate Color of the vehicle
+        zoneNo: 
+          type: string
+          description: Parking Zone Number
+        startTime: 
+          type: long
+          description: Start Time of the Virtual Permit
+        expiryTime: 
+          type: long
+          description: Expiry Time of the Virtual Permit
+        nextPaidParkingTime: 
+          type: long
+          description: Next Paid Parking Time if current time is Free Parking Time
+        lang: 
+          type: string
+          description: “0” for English - “8” for Arabic
+        datetimeCreated: 
+          type: long
+          description: Date Time of the VP Created
+        vpType: 
+          type: string
+          description: Confirmation/Extension
+        paymentType: 
+          type: string
+          description: Parking Account
+        errorCode: 
+          type: integer
+          description: Error Code, if any
+        errorMsg: 
+          type: string
+          description: Error Message, if any
+        parkingDuration: 
+          type: integer
+          description: Duration of the Virtual Permit in minutes
+        totalDuration: 
+          type: integer
+          description: Total Duration of the Virtual Permit in hours
+        maxParkingDuration: 
+          type: integer
+          description: Maximum duration for parking allowed in zone
+        amount: 
+          type: integer
+          description: Amount charged in fills
+        vpSuccess: 
+          type: boolean
+          description: true or false
+
+    FuelDeliverySlot:
+      description: Fuel Delivery Slot
+      type: object
+      properties: 
+        start_time: 
+          type: string
+          example: 08:00
+        end_time: 
+          type: string
+          example: 09:00
+    FuelDeliveryService:
+      description: Fuel Delivery Service
+      type: object
+      properties: 
+        id: 
+          type: integer
+          example: 1
+        name: 
+          type: string
+          example: Super 98
+        price: 
+          type: object
+          properties:
+            amount:
+              type: float
+              example: 3.87
+            unit:
+              type: string
+              example: litre
+            currency:
+              type: string
+              example: aed
+        service: 
+          type: object
+          properties:
+            code:
+              type: string
+              example: FD
+            slug:
+              type: string
+              example: fuel
+            name:
+              type: string
+              example: Fuel Delivery
+            description:
+              type: string
+              example: Anytime, anywhere
+            subtitle:
+              type: string
+              example: Same price as the petrol station!
+
+    FuelDeliveryOrder:
+      description: Fuel Delivery Order
+      type: object
+      properties: 
+        product_id: 
+          type: integer
+          example: 453
+        address: 
+          type: object
+          properties:
+            coordinates:
+              type: object
+              properties:
+                lat: 
+                  type: float
+                  example: 25.204198539249326
+                long: 
+                  type: float
+                  example: 25.204198539249326
+        timeslot:
+          type: object
+          properties:
+            date: 
+              type: string
+              example: 2023-12-31
+            start_time: 
+              type: string
+              example: 21:00
+            end_time: 
+              type: string
+              example: 22:00
+        vehicles: 
+          type: object
+          properties:
+            model_name:
+              type: string
+              example: Camry
+            vin:
+              type: string
+              example: 4T1BE32K85U528911
+            year:
+              type: integer
+              example: 2005
+            exterior_color_type:
+              type: string
+              example: white
+            registration_plate:
+              type: object
+              properties:
+                issuer_city:
+                  type: string
+                  example: dubai
+                sections:
+                  type: array
+                  items:
+                    type: string
+                  example: ["N","87395"]
+        user:
+          type: object
+          properties:
+            mobile:
+              type: integer
+              example: 971551234567
+            first_name:
+              type: string
+              example: "John"
+            last_name:
+              type: string
+              example: "Dae"
+
+
+      
+
+    
+    

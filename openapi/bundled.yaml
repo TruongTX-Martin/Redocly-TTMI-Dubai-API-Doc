@@ -2,13 +2,6 @@ openapi: 3.1.0
 info:
   version: 1.0.0
   title: TTMI Dubai
-servers:
-  - url: https://{tenant}/api/v1
-    variables:
-      tenant:
-        default: www
-        description: Your tenant id
-  - url: https://example.com/api/v1
 tags:
   - name: Authentication
     description: Login with account from global app
@@ -19,7 +12,7 @@ tags:
   - name: Fuel Delivery
     description: API for Fuel service
 paths:
-  /authentication:
+  authentication:
     post:
       tags:
         - Authentication
@@ -60,7 +53,7 @@ paths:
                   example: toYOtaPassword
         description: Payload for login API
         required: true
-  /vehicles:
+  vehicles:
     get:
       tags:
         - Vehicle
@@ -140,7 +133,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  /vehicles/{id}:
+  vehicles/{id}:
     get:
       tags:
         - Vehicle
@@ -238,7 +231,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  /parkings/zone/nearest:
+  parkings/zone/nearest:
     get:
       tags:
         - Parking
@@ -290,7 +283,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  /parkings/zone/order:
+  parkings/zone/order:
     post:
       tags:
         - Parking
@@ -389,7 +382,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  /parkings/zone/order/{id}:
+  parkings/zone/order/{id}:
     get:
       tags:
         - Parking
@@ -488,7 +481,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  /parkings/zone/orders:
+  parkings/zone/orders:
     get:
       tags:
         - Parking
@@ -568,7 +561,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  /parkings/fuel_delivery/booking_slot:
+  parkings/fuel_delivery/booking_slot:
     get:
       tags:
         - Fuel Delivery
@@ -619,7 +612,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  /parkings/fuel_delivery/services:
+  parkings/fuel_delivery/services:
     get:
       tags:
         - Fuel Delivery
@@ -669,7 +662,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  /parkings/fuel_delivery:
+  parkings/fuel_delivery:
     post:
       tags:
         - Fuel Delivery
@@ -737,7 +730,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  /parkings/fuel_delivery/{id}:
+  parkings/fuel_delivery/{id}:
     get:
       tags:
         - Fuel Delivery
@@ -784,59 +777,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-    patch:
-      tags:
-        - Fuel Delivery
-      summary: Update Fuel Order
-      description: Cancel Fuel Order
-      operationId: update-fuel-order
-      security:
-        - bearerAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                duration:
-                  description: duration
-                  type: string
-                  example: 2
-        description: Payload for extend duration time
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                $ref: '#/components/schemas/FuelDeliveryOrder'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequestError'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequestError'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequestError'
-        '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequestError'
-  /parkings/fuel_delivery/{id}/cancel:
+  parkings/fuel_delivery/{id}/cancel:
     delete:
       tags:
         - Fuel Delivery
