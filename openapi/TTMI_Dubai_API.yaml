@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.0
 info:
   version: 1.0.0
   title: TTMI Dubai
@@ -11,8 +11,10 @@ tags:
     description: API for parking service
   - name: Fuel Delivery
     description: API for Fuel service
+servers:
+  - url: 'http://localhost:5000'
 paths:
-  'authentication': 
+  'authentication':
     post:
       tags:
         - Authentication
@@ -33,6 +35,12 @@ paths:
                     example: passport
         '400':
           description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -58,26 +66,26 @@ paths:
     get:
       tags:
         - Vehicle
+      security:
+        - bearerAuth: []
       summary: Get Vehicles
       description: Get all vehicle belong to current user
       operationId: vehicles
-      security:
-        - bearerAuth: []
       parameters:
         - name: page_size
-          in: path
+          in: header
           required: false
           schema:
             type: integer
             description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
         - name: page_token
-          in: path
+          in: header
           required: false
           schema:
             type: string
             description: The next_page_token value returned from a previous List request, if any.
         - name: order_by
-          in: path
+          in: header
           required: false
           schema:
             type: array
@@ -85,13 +93,13 @@ paths:
               type: string
             description: Specify sorting order for list results. The string value follows SQL syntax. comma separated list of fields. The default sorting order is ascending.
         - name: query
-          in: path
+          in: header
           required: false
           schema:
             type: string
             description: The keyword you want to use to perform the search
         - name: query_by
-          in: path
+          in: header
           required: false
           schema:
             type: array
@@ -136,7 +144,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  'vehicles/{id}': 
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+  '/vehicles/{id}': 
+    parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
     get:
       tags:
         - Vehicle
@@ -145,12 +165,6 @@ paths:
       operationId: vehicles/id
       security:
         - bearerAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: OK
@@ -179,6 +193,12 @@ paths:
                 $ref: '#/components/schemas/BadRequestError'
         '404':
           description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -237,6 +257,7 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/BadRequestError'
+          
 
   'parkings/zone/nearest': 
     get:
@@ -249,12 +270,12 @@ paths:
         - bearerAuth: []
       parameters:
         - name: lat
-          in: path
+          in: query
           required: true
           schema:
             type: string
         - name: long
-          in: path
+          in: query
           required: true
           schema:
             type: string
@@ -394,6 +415,12 @@ paths:
                 $ref: '#/components/schemas/BadRequestError'
 
   'parkings/zone/order/{id}': 
+    parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
     get:
       tags:
         - Parking
@@ -402,12 +429,6 @@ paths:
       operationId: parking-order-detail
       security:
         - bearerAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: OK
@@ -507,19 +528,19 @@ paths:
         - bearerAuth: []
       parameters:
         - name: page_size
-          in: path
+          in: query
           required: false
           schema:
             type: integer
             description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
         - name: page_token
-          in: path
+          in: query
           required: false
           schema:
             type: string
             description: The next_page_token value returned from a previous List request, if any.
         - name: order_by
-          in: path
+          in: query
           required: false
           schema:
             type: array
@@ -527,13 +548,13 @@ paths:
               type: string
             description: Specify sorting order for list results. The string value follows SQL syntax. comma separated list of fields. The default sorting order is ascending.
         - name: query
-          in: path
+          in: query
           required: false
           schema:
             type: string
             description: The keyword you want to use to perform the search
         - name: query_by
-          in: path
+          in: query
           required: false
           schema:
             type: array
@@ -589,12 +610,12 @@ paths:
         - bearerAuth: []
       parameters:
         - name: date
-          in: path
+          in: query
           required: true
           schema:
             type: string
         - name: coordinates
-          in: path
+          in: query
           required: true
           schema:
             type: string
@@ -881,15 +902,16 @@ components:
           type: object
           properties:
             display_id:
-              Enum: ["CAR","MOTORCYCLE","TRUCK"]
               type: string
+              enum: ["CAR","MOTORCYCLE","TRUCK"]
+              
         cargo_volume:	
           description: The available volume for cargo or luggage. For automobiles, this is usually the trunk volume (L)
-          type: float
+          type: number
           example: 99999
         cargo_weight:	
           description: The permitted total weight of cargo and installations (e.g. a roof rack) on top of the vehicle (Kg)
-          type: float
+          type: number
           example: 99999
         speed_limit:	
           description: Vehicle speed limit
@@ -931,10 +953,10 @@ components:
                   type: string
                   example: 123 Any Street, Any Town, USA
                 lat:
-                  type: float
+                  type: number
                   example: 13.719126
                 lon:
-                  type: float
+                  type: number
                   example: 100.50645
                 start_operating_time:
                   type: string
@@ -964,10 +986,10 @@ components:
                   type: string
                   example: 123 Any Street, Any Town, USA
                 lat:
-                  type: float
+                  type: number
                   example: 13.719126
                 lon:
-                  type: float
+                  type: number
                   example: 100.50645
                 start_operating_time:
                   type: string
@@ -988,29 +1010,29 @@ components:
           example: 29734
         lat: 
           description: latitude
-          type: float
+          type: number
           example: -25.265630517742466
         long: 
           description: longitude
-          type: float
+          type: number
           example: -25.265630517742466
         type: 
           description: Type
-          type: String
+          type: string
           example: Premium
         provider: 
           description: Provider
-          type: String
+          type: string
           example: MAWAQIF
     ParkingOrder:
       description: Parking Order
       type: object
       properties: 
         Id: 
-          type: long
+          type: number
           description: Virtual Permit ID
         parentId: 
-          type: long
+          type: number
           description: Parent ID of the ticket, if any
         msisdn: 
           type: string
@@ -1034,19 +1056,19 @@ components:
           type: string
           description: Parking Zone Number
         startTime: 
-          type: long
+          type: number
           description: Start Time of the Virtual Permit
         expiryTime: 
-          type: long
+          type: number
           description: Expiry Time of the Virtual Permit
         nextPaidParkingTime: 
-          type: long
+          type: number
           description: Next Paid Parking Time if current time is Free Parking Time
         lang: 
           type: string
           description: “0” for English - “8” for Arabic
         datetimeCreated: 
-          type: long
+          type: number
           description: Date Time of the VP Created
         vpType: 
           type: string
@@ -1100,7 +1122,7 @@ components:
           type: object
           properties:
             amount:
-              type: float
+              type: number
               example: 3.87
             unit:
               type: string
@@ -1141,10 +1163,10 @@ components:
               type: object
               properties:
                 lat: 
-                  type: float
+                  type: number
                   example: 25.204198539249326
                 long: 
-                  type: float
+                  type: number
                   example: 25.204198539249326
         timeslot:
           type: object
@@ -1197,8 +1219,10 @@ components:
               type: string
               example: "Dae"
 
-
-      
+  securitySchemes:
+      bearerAuth:
+        type: http
+        scheme: bearer
 
     
     
