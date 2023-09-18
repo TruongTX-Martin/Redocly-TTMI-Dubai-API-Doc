@@ -1082,73 +1082,73 @@ components:
       description: Parking Order
       type: object
       properties: 
-        Id: 
+        id: 
           type: number
           description: Virtual Permit ID
-        parentId: 
+        parent_id: 
           type: number
           description: Parent ID of the ticket, if any
         msisdn: 
           type: string
           description: Mobile Number of the user
-        smartPhoneAppId: 
+        smartPhone_app_id: 
           type: string
           description: Smart Phone App ID (linking ID)
-        plateNo: 
+        plate_no: 
           type: string
           description: Plate Number of the vehicle
-        plateSourceId: 
+        plate_source_id: 
           type: integer
           description: Plate Source of the vehicle
-        plateTypeId: 
+        plate_type_id: 
           type: integer
           description: Plate Type of the vehicle
-        plateColorId: 
+        plate_color_id: 
           type: integer
           description: Plate Color of the vehicle
-        zoneNo: 
+        zone_number: 
           type: string
           description: Parking Zone Number
-        startTime: 
+        start_time: 
           type: number
           description: Start Time of the Virtual Permit
-        expiryTime: 
+        expiry_time: 
           type: number
           description: Expiry Time of the Virtual Permit
-        nextPaidParkingTime: 
+        next_paid_parking_time: 
           type: number
           description: Next Paid Parking Time if current time is Free Parking Time
-        lang: 
+        language_code: 
           type: string
           description: “0” for English - “8” for Arabic
-        datetimeCreated: 
+        datetime_created: 
           type: number
           description: Date Time of the VP Created
-        vpType: 
+        vp_type: 
           type: string
           description: Confirmation/Extension
-        paymentType: 
+        payment_type: 
           type: string
           description: Parking Account
-        errorCode: 
+        error_code: 
           type: integer
           description: Error Code, if any
-        errorMsg: 
+        error_message: 
           type: string
           description: Error Message, if any
-        parkingDuration: 
+        parking_duration: 
           type: integer
           description: Duration of the Virtual Permit in minutes
-        totalDuration: 
+        total_duration: 
           type: integer
           description: Total Duration of the Virtual Permit in hours
-        maxParkingDuration: 
+        max_parking_duration: 
           type: integer
           description: Maximum duration for parking allowed in zone
         amount: 
           type: integer
           description: Amount charged in fills
-        vpSuccess: 
+        vp_success: 
           type: boolean
           description: true or false
 
