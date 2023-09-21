@@ -3,7 +3,7 @@ info:
   version: 1.0.0
   title: TTMI Dubai
 tags:
-  - name: Authentication
+  - name: Login
     description: Login with account from global app
   - name: Vehicle
     description: API for get vehicle data
@@ -11,16 +11,19 @@ tags:
     description: API for parking service
   - name: Fuel Delivery
     description: API for Fuel service
+  - name: Notification
+    description: API for notification
 servers:
   - url: 'http://localhost:5000'
 paths:
-  'authentication':
+  '/login':
     post:
       tags:
-        - Authentication
+        - Login
       summary: Login
       description: Login to TCJP system with account from global application.
       operationId: login
+      security: []
       responses:
         '200':
           description: OK
@@ -62,7 +65,7 @@ paths:
         description: Payload for login API
         required: true
 
-  'vehicles': 
+  '/vehicles': 
     get:
       tags:
         - Vehicle
@@ -78,34 +81,6 @@ paths:
           schema:
             type: integer
             description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
-        - name: page_token
-          in: header
-          required: false
-          schema:
-            type: string
-            description: The next_page_token value returned from a previous List request, if any.
-        - name: order_by
-          in: header
-          required: false
-          schema:
-            type: array
-            items:
-              type: string
-            description: Specify sorting order for list results. The string value follows SQL syntax. comma separated list of fields. The default sorting order is ascending.
-        - name: query
-          in: header
-          required: false
-          schema:
-            type: string
-            description: The keyword you want to use to perform the search
-        - name: query_by
-          in: header
-          required: false
-          schema:
-            type: array
-            items:
-              type: string
-            description: Specify search fields you want to search by keyword specified in query
       responses:
         '200':
           description: OK
@@ -150,7 +125,62 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  '/vehicles/{id}': 
+  '/vehicle/status/{id}': 
+    parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+    get:
+      tags:
+        - Vehicle
+      summary: Get Vehicle Status
+      description: Get Vehicle Status
+      operationId: vehicle/status/id
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VehicleStatus'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+    
+  '/vehicle/{id}': 
     parameters:
         - name: id
           in: path
@@ -161,7 +191,7 @@ paths:
       tags:
         - Vehicle
       summary: Get Vehicle Detail
-      description: Get Vehicle Detail with status, plate number
+      description: Get Vehicle Detail detail
       operationId: vehicles/id
       security:
         - bearerAuth: []
@@ -259,7 +289,7 @@ paths:
                   $ref: '#/components/schemas/BadRequestError'
           
 
-  'parkings/zone/nearest': 
+  '/parkings/zones/nearest': 
     get:
       tags:
         - Parking
@@ -319,7 +349,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
 
-  'parkings/zone/order': 
+  '/parkings/zone/order': 
     post:
       tags:
         - Parking
@@ -334,14 +364,6 @@ paths:
             schema:
               type: object
               properties:
-                ws_user:
-                  description: WS Username
-                  type: string
-                  example: toYOtaPURCHase
-                ws_password:
-                  description: WS Password
-                  type: string
-                  example: Password
                 smartphone_app_id:
                   description: Smart Phone App ID (linking ID)
                   type: string
@@ -354,22 +376,10 @@ paths:
                   description: “0” for English, “8” for Arabic
                   type: string
                   example: 0
-                plane_number:
+                plate_number:
                   description: Plate Number of the vehicle
                   type: string
                   example: 38599
-                plate_source_id:
-                  description: Plate Source ID of the vehicle
-                  type: integer
-                  example: 2
-                plate_type_id:
-                  description: Plate Type ID of the vehicle
-                  type: integer
-                  example: 1
-                plate_color_id:
-                  description: Plate Color ID of the vehicle
-                  type: integer
-                  example: 1
                 zone_number:
                   description: Parking Zone Number
                   type: string
@@ -387,7 +397,6 @@ paths:
                   type: integer
                   example: 0
                 req_src_id:
-                  description: 6
                   type: integer
                   example: 8
         description: Payload for create parking order
@@ -426,7 +435,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
 
-  'parkings/zone/order/{id}': 
+  '/parkings/zone/order/{id}': 
     parameters:
         - name: id
           in: path
@@ -535,7 +544,7 @@ paths:
                 schema:
                   $ref: '#/components/schemas/BadRequestError'
 
-  'parkings/zone/orders': 
+  '/parkings/zone/orders': 
     get:
       tags:
         - Parking
@@ -623,7 +632,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
 
-  'parkings/fuel_delivery/booking_slot': 
+  '/fuel_delivery/booking_slot': 
     get:
       tags:
         - Fuel Delivery
@@ -654,8 +663,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                $ref: '#/components/schemas/FuelDeliverySlot'
+                type: array
+                items: 
+                  $ref: '#/components/schemas/FuelDeliverySlot'
         '400':
           description: Bad request
           content:
@@ -682,7 +692,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
 
-  'parkings/fuel_delivery/services': 
+  '/fuel_delivery/services': 
     get:
       tags:
         - Fuel Delivery
@@ -740,7 +750,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
 
-  'parkings/fuel_delivery': 
+  '/fuel_delivery/order': 
     post:
       tags:
         - Fuel Delivery
@@ -771,15 +781,54 @@ paths:
                 coordinates:
                   description: Coordinates
                   type: object
-                timeslot:
+                  properties:
+                    coordinates:
+                      type: object
+                      properties:
+                        latitude:
+                          type: number
+                        longitude:
+                          type: number
+                time_slot:
                   description: timeslot
                   type: object
+                  properties:
+                    date: 
+                      type: string
+                      example: "2023-12-31"
+                    start_time: 
+                      type: string
+                      example: "21:00"
+                    end_time:
+                      type: string
+                      example: "22:00"
                 vehicle:
                   description: vehicle
                   type: object
+                  properties:
+                    model_name:
+                      type: string
+                    registration_plate:
+                      type: object
+                      properties:
+                        issuer_city: 
+                          type: string
+                          example: "Dubai"
+                        sections:
+                          type: array
+                          items:
+                            type: string
+                          example: ["N","87395"]
                 user:
                   description: user
                   type: object
+                  properties:
+                    phone_number:
+                      type: string
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
         description: Payload for create fuel delivery order
         required: true
       responses:
@@ -816,7 +865,96 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
 
-  'parkings/fuel_delivery/{id}': 
+  '/fuel_delivery/orders': 
+    get:
+      tags:
+        - Fuel Delivery
+      summary: Get Fuel delivery orders
+      description: Get Fuel delivery orders
+      operationId: fuel_delivery-orders
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+            description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
+        - name: page_token
+          in: query
+          required: false
+          schema:
+            type: string
+            description: The next_page_token value returned from a previous List request, if any.
+        - name: order_by
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            description: Specify sorting order for list results. The string value follows SQL syntax. comma separated list of fields. The default sorting order is ascending.
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+            description: The keyword you want to use to perform the search
+        - name: query_by
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            description: Specify search fields you want to search by keyword specified in query
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page_size:
+                    type: integer
+                    description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
+                    example: 20
+                  page_token: 
+                    type: string
+                  orders: 
+                    type: array 
+                    items: 
+                      $ref: '#/components/schemas/FuelDeliveryOrder'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+
+  '/fuel_delivery/order/{id}': 
     get:
       tags:
         - Fuel Delivery
@@ -872,7 +1010,7 @@ paths:
                 $ref: '#/components/schemas/BadRequestError'
 
 
-  'parkings/fuel_delivery/{id}/cancel': 
+  '/fuel_delivery/order/{id}/cancel': 
     delete:
       tags:
         - Fuel Delivery
@@ -926,8 +1064,230 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
 
+
+  '/notification/token':
+    post:
+      tags:
+        - Notification
+      summary: Register notification token
+      description: Register notification token
+      operationId: register_notification_token
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notification_token:
+                  description: Notification token (from FCM)
+                  type: string
+                  example: fwwveqxnue9715041254701615097270154e858104ab1ad4b
+                user_id:
+                  description: Current user id
+                  type: number
+                  example: 1
+        description: Payload for register token
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  is_success: 
+                    type: boolean
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+  '/notifications':
+    get:
+      tags:
+        - Notification
+      summary: Get User Notifications
+      description: Get User Notifications
+      operationId: user-notifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+            description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
+        - name: page_token
+          in: query
+          required: false
+          schema:
+            type: string
+            description: The next_page_token value returned from a previous List request, if any.
+        - name: order_by
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            description: Specify sorting order for list results. The string value follows SQL syntax. comma separated list of fields. The default sorting order is ascending.
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+            description: The keyword you want to use to perform the search
+        - name: query_by
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            description: Specify search fields you want to search by keyword specified in query
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page_size:
+                    type: integer
+                    description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
+                    example: 20
+                  page_token: 
+                    type: string
+                  notifications: 
+                    type: array 
+                    items: 
+                      $ref: '#/components/schemas/Notification'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+
+  '/notification/{id}':
+    parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+    patch:
+      tags:
+        - Notification
+      summary: Mark notification as read
+      description: Mark notification as read
+      operationId: mark_notification_as_read
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: number
+        description: Payload for register token
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
 components:
   schemas:
+    Notification:
+      type: object
+      properties:
+        id: 
+          type: integer
+        title: 
+          type: string
+        message:
+          type: string 
+        service: 
+          type: string
+        redirect_action:
+          type: string
+        is_read: 
+          type: boolean
     BadRequestError:
       type: object
       properties: 
@@ -939,118 +1299,57 @@ components:
           description: Error message
           type: string
           example: Error
+    VehicleStatus:
+      description: Vehicle status
+      type: object
+      properties: 
+        received_date: 
+          type: string
+          example: string
+        latitude: 
+          type: number
+        longitude: 
+          type: number
+        odor_meter: 
+          type: number
+        total_fuel: 
+          type: number
+        remaining_fuel: 
+          type: number
+        driving_range: 
+          type: number
     Vehicle:
       description: Vehicle
       type: object
       properties: 
-        id: 
-          description: Vehicle ID (System issued)
-          type: string
-          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
-        license_plate: 
-          description: Vehicle license plate. Must be unique in the same tenant
+        vin: 
+          description: Vin string - unique for each vehicle
           type: string
           example: string
-        type: 
-          description: Vehicle type
-          type: object
-          properties:
-            display_id:
-              type: string
-              enum: ["CAR","MOTORCYCLE","TRUCK"]
-              
-        cargo_volume:	
-          description: The available volume for cargo or luggage. For automobiles, this is usually the trunk volume (L)
-          type: number
-          example: 99999
-        cargo_weight:	
-          description: The permitted total weight of cargo and installations (e.g. a roof rack) on top of the vehicle (Kg)
-          type: number
-          example: 99999
-        speed_limit:	
-          description: Vehicle speed limit
+        branch_code: 
+          description: Branch Code 1:Toyota 2:Lexus
+          type: string
+          example: string
+        plate_number: 
+          description: Plate number 
+          type: string
+          example: string
+        vehicle_model: 
+          type: string
+          example: string
+        color_code: 
+          type: string
+          example: string
+        color_name: 
+          type: string
+          example: string
+        vehicle_name: 
+          type: string
+          example: string
+        user_type: 
+          description:  1:Owner 2:Shared user
           type: integer
-          example: 200
-        driver: 
-          type: object
-          properties:
-            id:
-              type: string
-            full_name:
-              type: string
-        work_setting: 
-          type: object
-          properties:
-            start_operating_time:
-              type: string
-            end_operating_time:
-              type: string
-            start_location:
-              type: object
-              properties:
-                id:
-                  type: string
-                  example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
-                display_id:
-                  type: string
-                  example: string
-                name:
-                  type: string
-                  example: string
-                contact_name:
-                  type: string
-                  example: string
-                contact_tel:
-                  type: string
-                  example: +6568179590
-                address:
-                  type: string
-                  example: 123 Any Street, Any Town, USA
-                lat:
-                  type: number
-                  example: 13.719126
-                lon:
-                  type: number
-                  example: 100.50645
-                start_operating_time:
-                  type: string
-                  example: 2023-06-28T07:00:00+08:00
-                end_operating_time:
-                  type: string
-                  example: 2023-06-28T07:00:00+08:00
-            end_location:
-              type: object
-              properties:
-                id:
-                  type: string
-                  example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
-                display_id:
-                  type: string
-                  example: string
-                name:
-                  type: string
-                  example: string
-                contact_name:
-                  type: string
-                  example: string
-                contact_tel:
-                  type: string
-                  example: +6568179590
-                address:
-                  type: string
-                  example: 123 Any Street, Any Town, USA
-                lat:
-                  type: number
-                  example: 13.719126
-                lon:
-                  type: number
-                  example: 100.50645
-                start_operating_time:
-                  type: string
-                  example: 2023-06-28T07:00:00+08:00
-                end_operating_time:
-                  type: string
-                  example: 2023-06-28T07:00:00+08:00
+          example: 1
     Zone: 
       description: Zone
       type: object
@@ -1088,24 +1387,15 @@ components:
         parent_id: 
           type: number
           description: Parent ID of the ticket, if any
-        msisdn: 
+        user_phone_number: 
           type: string
           description: Mobile Number of the user
         smartPhone_app_id: 
           type: string
           description: Smart Phone App ID (linking ID)
-        plate_no: 
+        plate_number: 
           type: string
           description: Plate Number of the vehicle
-        plate_source_id: 
-          type: integer
-          description: Plate Source of the vehicle
-        plate_type_id: 
-          type: integer
-          description: Plate Type of the vehicle
-        plate_color_id: 
-          type: integer
-          description: Plate Color of the vehicle
         zone_number: 
           type: string
           description: Parking Zone Number
@@ -1124,12 +1414,6 @@ components:
         datetime_created: 
           type: number
           description: Date Time of the VP Created
-        vp_type: 
-          type: string
-          description: Confirmation/Extension
-        payment_type: 
-          type: string
-          description: Parking Account
         error_code: 
           type: integer
           description: Error Code, if any
@@ -1148,7 +1432,7 @@ components:
         amount: 
           type: integer
           description: Amount charged in fills
-        vp_success: 
+        is_success: 
           type: boolean
           description: true or false
 
@@ -1206,23 +1490,28 @@ components:
     FuelDeliveryOrder:
       description: Fuel Delivery Order
       type: object
-      properties: 
-        product_id: 
+      properties:
+        id:
           type: integer
-          example: 453
-        address: 
+          example: 1
+        product_id:
+          type: integer
+          example: 451
+        status:
+          type: string
+          example: "confirmed"
+        coordinates:
+          description: Coordinates
           type: object
           properties:
             coordinates:
               type: object
               properties:
-                lat: 
+                latitude:
                   type: number
-                  example: 25.204198539249326
-                long: 
+                longitude:
                   type: number
-                  example: 25.204198539249326
-        timeslot:
+        time_slot:
           type: object
           properties:
             date: 
@@ -1272,7 +1561,41 @@ components:
             last_name:
               type: string
               example: "Dae"
-
+        address: 
+          type: object
+          properties:
+            coordinates:
+              type: object
+              properties:
+                lat: 
+                  type: number
+                  example: 25.204198539249326
+                long: 
+                  type: number
+                  example: 25.204198539249326
+        products:
+          type: object
+          properties:
+            id:   
+              type: integer
+            name:
+              type: string
+            service: 
+              type: object
+              properties:
+                code: 
+                  type: string
+                  example: FD
+                slug:
+                  type: string
+                  example: fuel
+                name: 
+                  type: string
+                  example: Fuel Delivery
+                description:
+                  type: string
+                sub_title:
+                  type: string
   securitySchemes:
       bearerAuth:
         type: http
