@@ -349,7 +349,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
 
-  '/parkings/zone/order': 
+  '/parkings/zones/order': 
     post:
       tags:
         - Parking
@@ -435,7 +435,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
 
-  '/parkings/zone/order/{id}': 
+  '/parkings/zones/order/{id}': 
     parameters:
         - name: id
           in: path
@@ -544,7 +544,7 @@ paths:
                 schema:
                   $ref: '#/components/schemas/BadRequestError'
 
-  '/parkings/zone/orders': 
+  '/parkings/zones/orders': 
     get:
       tags:
         - Parking
@@ -1065,7 +1065,7 @@ paths:
                 $ref: '#/components/schemas/BadRequestError'
 
 
-  '/notification/token':
+  '/notifications/token':
     post:
       tags:
         - Notification

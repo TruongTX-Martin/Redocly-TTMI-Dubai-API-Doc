@@ -336,7 +336,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  /parkings/zone/order:
+  /parkings/zones/order:
     post:
       tags:
         - Parking
@@ -359,7 +359,7 @@ paths:
                   description: Mobile number preceded by 971 without ‘0’, ‘+’ or ‘00’
                   type: string
                   example: 971504125470
-                lang:
+                language_code:
                   description: “0” for English, “8” for Arabic
                   type: string
                   example: 0
@@ -383,7 +383,7 @@ paths:
                   description: Loyalty Id of the user account. Otherwise send 0
                   type: integer
                   example: 0
-                req_src_id:
+                request_source_id:
                   type: integer
                   example: 8
         description: Payload for create parking order
@@ -420,7 +420,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  /parkings/zone/order/{id}:
+  /parkings/zones/order/{id}:
     parameters:
       - name: id
         in: path
@@ -525,7 +525,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  /parkings/zone/orders:
+  /parkings/zones/orders:
     get:
       tags:
         - Parking
