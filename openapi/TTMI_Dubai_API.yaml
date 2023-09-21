@@ -372,7 +372,7 @@ paths:
                   description: Mobile number preceded by 971 without ‘0’, ‘+’ or ‘00’
                   type: string
                   example: 971504125470
-                lang:
+                language_code:
                   description: “0” for English, “8” for Arabic
                   type: string
                   example: 0
@@ -396,7 +396,7 @@ paths:
                   description: Loyalty Id of the user account. Otherwise send 0
                   type: integer
                   example: 0
-                req_src_id:
+                request_source_id:
                   type: integer
                   example: 8
         description: Payload for create parking order
