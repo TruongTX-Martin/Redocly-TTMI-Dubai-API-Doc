@@ -1053,7 +1053,7 @@ paths:
                 $ref: '#/components/schemas/BadRequestError'
 
 
-  '/notifications/token':
+  '/notifications/tokens':
     post:
       tags:
         - Notification
