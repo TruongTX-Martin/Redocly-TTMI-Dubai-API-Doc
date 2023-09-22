@@ -125,7 +125,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  '/vehicle/status/{id}': 
+  '/vehicles/{id}/status': 
     parameters:
         - name: id
           in: path
@@ -180,7 +180,7 @@ paths:
                 $ref: '#/components/schemas/BadRequestError'
 
     
-  '/vehicle/{id}': 
+  '/vehicles/{id}': 
     parameters:
         - name: id
           in: path
@@ -289,7 +289,7 @@ paths:
                   $ref: '#/components/schemas/BadRequestError'
           
 
-  '/parkings/zones/nearest': 
+  '/parking/zones/nearest': 
     get:
       tags:
         - Parking
@@ -298,17 +298,6 @@ paths:
       operationId: nearest-zone
       security:
         - bearerAuth: []
-      parameters:
-        - name: latitude
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: longitude
-          in: query
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: OK
@@ -349,7 +338,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
 
-  '/parkings/zones/order': 
+  '/parking/zones/orders': 
     post:
       tags:
         - Parking
@@ -435,7 +424,94 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
 
-  '/parkings/zones/order/{id}': 
+    get:
+      tags:
+        - Parking
+      summary: Get Parking Orders
+      description: Get Parking Orders
+      operationId: parking-orders
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page_size
+          in: query
+          required: false
+          schema:
+            type: integer
+            description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
+        - name: page_token
+          in: query
+          required: false
+          schema:
+            type: string
+            description: The next_page_token value returned from a previous List request, if any.
+        - name: order_by
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            description: Specify sorting order for list results. The string value follows SQL syntax. comma separated list of fields. The default sorting order is ascending.
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+            description: The keyword you want to use to perform the search
+        - name: query_by
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+            description: Specify search fields you want to search by keyword specified in query
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page_size:
+                    type: integer
+                    description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
+                    example: 20
+                  page_token: 
+                    type: string
+                  vehicles: 
+                    type: array 
+                    items: 
+                      $ref: '#/components/schemas/ParkingOrder'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestError'
+
+  '/parking/zones/orders/{id}': 
     parameters:
         - name: id
           in: path
@@ -544,95 +620,7 @@ paths:
                 schema:
                   $ref: '#/components/schemas/BadRequestError'
 
-  '/parkings/zones/orders': 
-    get:
-      tags:
-        - Parking
-      summary: Get Parking Orders
-      description: Get Parking Orders
-      operationId: parking-orders
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: page_size
-          in: query
-          required: false
-          schema:
-            type: integer
-            description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
-        - name: page_token
-          in: query
-          required: false
-          schema:
-            type: string
-            description: The next_page_token value returned from a previous List request, if any.
-        - name: order_by
-          in: query
-          required: false
-          schema:
-            type: array
-            items:
-              type: string
-            description: Specify sorting order for list results. The string value follows SQL syntax. comma separated list of fields. The default sorting order is ascending.
-        - name: query
-          in: query
-          required: false
-          schema:
-            type: string
-            description: The keyword you want to use to perform the search
-        - name: query_by
-          in: query
-          required: false
-          schema:
-            type: array
-            items:
-              type: string
-            description: Specify search fields you want to search by keyword specified in query
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  page_size:
-                    type: integer
-                    description: The maximum number of items to return. If the page_size is 0, the server will decide the number of results to be returned. (default will be returned)
-                    example: 20
-                  page_token: 
-                    type: string
-                  vehicles: 
-                    type: array 
-                    items: 
-                      $ref: '#/components/schemas/ParkingOrder'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequestError'
-
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequestError'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequestError'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequestError'
-
-  '/fuel_delivery/booking_slot': 
+  '/fuel_delivery/booking_slots': 
     get:
       tags:
         - Fuel Delivery
@@ -651,7 +639,12 @@ paths:
           in: query
           required: true
           schema:
-            type: string
+            type: object
+            properties:
+              latitude:
+                type: number
+              longitude:
+                type: number
         - name: Accept-Language
           in: header
           required: true
@@ -706,7 +699,12 @@ paths:
           in: query
           required: true
           schema:
-            type: string
+            type: object
+            properties:
+              latitude:
+                type: number
+              longitude:
+                type: number
         - name: Accept-Language
           in: header
           required: true
@@ -750,7 +748,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
 
-  '/fuel_delivery/order': 
+  '/fuel_delivery/orders': 
     post:
       tags:
         - Fuel Delivery
@@ -782,13 +780,10 @@ paths:
                   description: Coordinates
                   type: object
                   properties:
-                    coordinates:
-                      type: object
-                      properties:
-                        latitude:
-                          type: number
-                        longitude:
-                          type: number
+                    latitude:
+                      type: number
+                    longitude:
+                      type: number
                 time_slot:
                   description: timeslot
                   type: object
@@ -865,7 +860,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
 
-  '/fuel_delivery/orders': 
     get:
       tags:
         - Fuel Delivery
@@ -954,7 +948,7 @@ paths:
                 $ref: '#/components/schemas/BadRequestError'
 
 
-  '/fuel_delivery/order/{id}': 
+  '/fuel_delivery/orders/{id}': 
     get:
       tags:
         - Fuel Delivery
@@ -1008,9 +1002,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-
-
-  '/fuel_delivery/order/{id}/cancel': 
+    
     delete:
       tags:
         - Fuel Delivery
@@ -1026,12 +1018,8 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
+        '204':
+          description: No Content 
         '400':
           description: Bad request
           content:
@@ -1084,10 +1072,6 @@ paths:
                   description: Notification token (from FCM)
                   type: string
                   example: fwwveqxnue9715041254701615097270154e858104ab1ad4b
-                user_id:
-                  description: Current user id
-                  type: number
-                  example: 1
         description: Payload for register token
         required: true
       responses:
@@ -1214,7 +1198,7 @@ paths:
                 $ref: '#/components/schemas/BadRequestError'
 
 
-  '/notification/{id}':
+  '/notifications/{id}':
     parameters:
         - name: id
           in: path
@@ -1237,6 +1221,8 @@ paths:
               properties:
                 user_id:
                   type: number
+                is_read: 
+                  type: boolean
         description: Payload for register token
         required: true
       responses:
@@ -1390,7 +1376,7 @@ components:
         user_phone_number: 
           type: string
           description: Mobile Number of the user
-        smartPhone_app_id: 
+        smartphone_app_id: 
           type: string
           description: Smart Phone App ID (linking ID)
         plate_number: 
@@ -1504,13 +1490,10 @@ components:
           description: Coordinates
           type: object
           properties:
-            coordinates:
-              type: object
-              properties:
-                latitude:
-                  type: number
-                longitude:
-                  type: number
+              latitude:
+                type: number
+              longitude:
+                type: number
         time_slot:
           type: object
           properties:
