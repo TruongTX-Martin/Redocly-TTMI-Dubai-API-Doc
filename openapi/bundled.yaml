@@ -466,7 +466,7 @@ paths:
                     example: 20
                   page_token:
                     type: string
-                  vehicles:
+                  orders:
                     type: array
                     items:
                       $ref: '#/components/schemas/ParkingOrder'
@@ -1020,7 +1020,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequestError'
-  /notifications/token:
+  /notifications/tokens:
     post:
       tags:
         - Notification
@@ -1258,7 +1258,7 @@ components:
           type: number
         longitude:
           type: number
-        odor_meter:
+        odometer:
           type: number
         total_fuel:
           type: number
@@ -1274,7 +1274,7 @@ components:
           description: Vin string - unique for each vehicle
           type: string
           example: string
-        branch_code:
+        brand_code:
           description: Branch Code 1:Toyota 2:Lexus
           type: string
           example: string
@@ -1291,13 +1291,16 @@ components:
         color_name:
           type: string
           example: string
-        vehicle_name:
+        vehicle_name_by_maker:
+          type: string
+          example: string
+        vehicle_name_by_global_user:
           type: string
           example: string
         user_type:
-          description: 1:Owner 2:Shared user
-          type: integer
-          example: 1
+          description: Owner or Shared user
+          type: string
+          example: null
     Zone:
       description: Zone
       type: object
@@ -1309,18 +1312,18 @@ components:
           type: string
           description: id from Redis database
           example: 29734
-        lat:
+        latitude:
           description: latitude
           type: number
           example: -25.265630517742466
-        long:
+        longitude:
           description: longitude
           type: number
           example: -25.265630517742466
-        type:
+        zone_number:
           description: Type
           type: string
-          example: Premium
+          example: 393J
         provider:
           description: Provider
           type: string
@@ -1338,19 +1341,16 @@ components:
         user_phone_number:
           type: string
           description: Mobile Number of the user
-        smartphone_app_id:
-          type: string
-          description: Smart Phone App ID (linking ID)
         plate_number:
           type: string
           description: Plate Number of the vehicle
         zone_number:
           type: string
           description: Parking Zone Number
-        start_time:
+        started_at:
           type: number
           description: Start Time of the Virtual Permit
-        expiry_time:
+        expired_at:
           type: number
           description: Expiry Time of the Virtual Permit
         next_paid_parking_time:
@@ -1359,7 +1359,7 @@ components:
         language_code:
           type: string
           description: “0” for English - “8” for Arabic
-        datetime_created:
+        created_at:
           type: number
           description: Date Time of the VP Created
         error_code:
